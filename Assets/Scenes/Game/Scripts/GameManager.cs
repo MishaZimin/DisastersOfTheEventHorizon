@@ -2,30 +2,35 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
-using System; 
+using System;
 
 public class GameManager : MonoBehaviour 
 {
     [Header("Game Over UI")]
     [SerializeField] private GameObject gameOverPanel;
-	[SerializeField] private TMP_Text survivalTimeText;
-    [SerializeField] private Canvas topCanvas; // Ваш верхний Canvas
-    [SerializeField] private Canvas bottomCanvas; // Ваш нижний Canvas
-    [SerializeField] private Canvas shopCanvas; // Ваш нижний Canvas
-	private WaveSpawner waveSpawner;
-    
+    [SerializeField] private TMP_Text survivalTimeText;
+
+    [Header("UI Canvases")]
+    [SerializeField] private Canvas topCanvas; 
+    [SerializeField] private Canvas bottomCanvas; 
+    [SerializeField] private Canvas shopCanvas;
+
+    [Header("Pause UI")]
+    [SerializeField] private GameObject pausePanel;
+
     private bool gameEnded = false;
+    private bool isPaused = false;
 
     void Start()
     {
-		
-		Time.timeScale = 1f;
+        Time.timeScale = 1f;
 
-        // Гарантированно скрываем панель при старте
-		if (gameOverPanel != null)
-			gameOverPanel.SetActive(false);
-        
-        // Включаем все UI элементы при старте
+        if (gameOverPanel != null)
+            gameOverPanel.SetActive(false);
+
+        if (pausePanel != null)
+            pausePanel.SetActive(false);
+
         SetGameUIState(active: true);
     }
 
@@ -33,61 +38,73 @@ public class GameManager : MonoBehaviour
     {
         if (gameEnded) return;
 
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (isPaused)
+                ResumeGame();
+            else
+                PauseGame();
+        }
+
         if (PlayerStats.Lives <= 0)
         {
             EndGame();
         }
     }
 
-void EndGame()
-{
-    gameEnded = true;
-    Debug.Log("Game Over!");
-
-    // Показываем, сколько времени продержался игрок
-    if (survivalTimeText != null && waveSpawner != null)
-{
-    float survivedTime = waveSpawner.GetCurrentGameTime();
-    int minutes = Mathf.FloorToInt(survivedTime / 60f);
-    int seconds = Mathf.FloorToInt(survivedTime % 60f);
-    int wave = WaveSpawner.CurrentWave;
-
-    survivalTimeText.text = $"Вы продержались: {minutes:00}:{seconds:00}\nВолна: {wave}";
-}
-    // Отключаем основные UI элементы
-    SetGameUIState(active: false);
-
-    // Включаем панель GameOver
-    if (gameOverPanel != null)
+    void EndGame()
     {
-        gameOverPanel.SetActive(true);
-        Time.timeScale = 0f;
+        gameEnded = true;
+        Debug.Log("Game Over!");
+
+        SetGameUIState(active: false);
+
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+            Time.timeScale = 0f;
+        }
     }
-}
 
-	// Управление состоянием UI
-	private void SetGameUIState(bool active)
-	{
-		if (topCanvas != null)
-			topCanvas.enabled = active;
+    private void SetGameUIState(bool active)
+    {
+        if (topCanvas != null)
+            topCanvas.enabled = active;
 
-		if (bottomCanvas != null)
-			bottomCanvas.enabled = active;
-			
-			if (shopCanvas != null)
+        if (bottomCanvas != null)
+            bottomCanvas.enabled = active;
+
+        if (shopCanvas != null)
             shopCanvas.enabled = active;
     }
 
-    // Исправленный метод рестарта
     public void RestartLevel()
     {
-
         Time.timeScale = 1f;
         gameEnded = false;
-        
-        // Включаем UI обратно
         SetGameUIState(active: true);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
 
-SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    public void LoadMainMenu()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(0);
+    }
+
+    public void PauseGame()
+    {
+        isPaused = true;
+        Time.timeScale = 0f;
+        pausePanel?.SetActive(true);
+        SetGameUIState(false);
+    }
+
+    public void ResumeGame()
+    {
+        isPaused = false;
+        Time.timeScale = 1f;
+        pausePanel?.SetActive(false);
+        SetGameUIState(true);
     }
 }
