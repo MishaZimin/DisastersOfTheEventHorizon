@@ -67,7 +67,7 @@ void Die()
 
     if (WaveSpawner.CurrentWave >= 12)
     {
-        moneyMultiplier = 0.45f;
+        moneyMultiplier = 0.6f;
     }
 
     PlayerStats.Money += Mathf.RoundToInt(value * moneyMultiplier);

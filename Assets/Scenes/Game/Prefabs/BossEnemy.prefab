@@ -91,11 +91,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 8
-  health: 100
-  value: 25
+  health: 1000
+  value: 200
   healthBarPrefab: {fileID: 7608892794335809766, guid: f42586f0c8fc34af4a515063333ea3b5,
     type: 3}
-  isBoss: 0
+  isBoss: 1
 --- !u!95 &9155400277211608855
 Animator:
   serializedVersion: 5

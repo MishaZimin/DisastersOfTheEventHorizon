@@ -111,7 +111,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05e7f8fb1080f4f40b2652296ae1bb13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 60
+  speed: 8
   health: 150
   value: 25
   healthBarPrefab: {fileID: 7608892794335809766, guid: f42586f0c8fc34af4a515063333ea3b5,
